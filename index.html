@@ -14,6 +14,8 @@
             --cream: #FAF8F5;
             --charcoal: #3D3D3D;
             --danger: #E06C68;
+            --gold: #FBC02D;
+            --gold-light: #FFF59D;
         }
 
         * {
@@ -68,7 +70,8 @@
         .score-label { font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; opacity: 0.6; }
         .score-value { font-size: 32px; font-weight: 800; line-height: 1; }
         
-        .best-score { font-size: 14px; font-weight: 700; opacity: 0.5; }
+        .best-score { font-size: 14px; font-weight: 700; opacity: 0.5; margin-bottom: 5px;}
+        .daily-word-hud { font-size: 13px; font-weight: 800; color: var(--teal); background: rgba(255,255,255,0.6); padding: 4px 8px; border-radius: 6px; display: inline-block;}
         
         .center-hud {
             display: flex;
@@ -91,23 +94,9 @@
         }
         .btn-menu:active { transform: scale(0.95); }
 
-        .word-bank {
-            position: absolute;
-            top: 85px;
-            left: 20px;
-            right: 20px;
-            font-size: 14px;
-            font-weight: 800;
-            color: var(--charcoal);
-            opacity: 0.5;
-            white-space: nowrap;
-            overflow-x: auto;
-            pointer-events: none;
-        }
-
         .combo-counter {
             position: absolute;
-            top: 120px;
+            top: 130px;
             left: 50%;
             transform: translateX(-50%);
             font-size: 20px;
@@ -154,15 +143,16 @@
         
         .menu-title { font-size: 42px; font-weight: 800; margin-bottom: 20px; color: var(--charcoal); letter-spacing: -1px;}
         .menu-subtitle { font-size: 18px; font-weight: 700; color: var(--danger); margin-bottom: 20px; }
+        .hook-text { font-size: 16px; font-weight: 800; color: var(--teal); margin-bottom: 20px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
         
         .instructions-box {
             background: white; padding: 20px; border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: left;
-            margin-bottom: 30px; width: 100%; max-width: 350px; font-size: 15px; line-height: 1.5;
+            margin-bottom: 30px; width: 100%; max-width: 350px; font-size: 14px; line-height: 1.5;
         }
         .instructions-box li { margin-bottom: 10px; }
         .instructions-box span { font-weight: 800; color: var(--teal); }
-        .instructions-box .warn { color: var(--danger); }
 
         .menu-btns { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 250px;}
         .btn-large {
@@ -185,19 +175,19 @@
         }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
         
-        .modal-overlay.forced-mode { background: rgba(224, 108, 104, 0.3); animation: pulse-bg 1s infinite alternate;}
-        @keyframes pulse-bg { from { background: rgba(224, 108, 104, 0.2); } to { background: rgba(224, 108, 104, 0.4); } }
+        /* THE POWER SURGE STYLING */
+        .modal-overlay.surge-mode { background: rgba(251, 192, 45, 0.2); animation: pulse-gold 1s infinite alternate;}
+        @keyframes pulse-gold { from { background: rgba(251, 192, 45, 0.1); } to { background: rgba(251, 192, 45, 0.3); } }
         
-        .forced-warning {
+        .surge-warning {
             display: none;
-            color: white; background: var(--danger);
+            color: var(--charcoal); background: linear-gradient(to right, var(--gold-light), var(--gold));
             padding: 10px 20px; border-radius: 20px;
             font-weight: 800; font-size: 16px; margin-bottom: 15px;
-            text-align: center; box-shadow: 0 4px 15px rgba(224, 108, 104, 0.5);
+            text-align: center; box-shadow: 0 4px 15px rgba(251, 192, 45, 0.4);
             animation: shake 0.5s infinite alternate;
         }
-        @keyframes shake { 0% { transform: translateY(0); } 100% { transform: translateY(-5px); } }
-        .modal-overlay.forced-mode .forced-warning { display: block; }
+        .modal-overlay.surge-mode .surge-warning { display: block; }
 
         .modal-content {
             background: white; border-radius: 30px 30px 0 0; padding: 20px;
@@ -212,6 +202,7 @@
         .min-letters-req { color: var(--danger); }
         .timer-bar-container { width: 100%; height: 10px; background: var(--gray); border-radius: 5px; margin-bottom: 15px; overflow: hidden; }
         .timer-bar { height: 100%; width: 100%; background: var(--teal); transition: width 0.1s linear, background-color 0.3s; }
+        .modal-overlay.surge-mode .timer-bar { background: var(--gold); }
         .timer-bar.danger { background: var(--danger); }
 
         /* WORD BUILDER */
@@ -223,6 +214,7 @@
             display: flex; justify-content: center; align-items: center; font-size: 20px; font-weight: 800;
             cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; transition: transform 0.1s;
         }
+        .letter-tile.lucky { background: var(--gold) !important; color: var(--charcoal); box-shadow: 0 0 12px var(--gold); border: 2px solid white;}
         .letter-tile:active { transform: scale(0.9); }
         .letter-tile.used { opacity: 0.3; pointer-events: none; }
         .tile-score { position: absolute; bottom: 2px; right: 4px; font-size: 10px; font-weight: 700; }
@@ -237,6 +229,7 @@
         .status-msg { height: 20px; margin-bottom: 5px; font-weight: 800; font-size: 14px; text-transform: uppercase; text-align: center;}
         .status-error { color: var(--danger); }
         .status-success { color: var(--teal); }
+        .status-surge { color: var(--gold); text-shadow: 0 1px 2px rgba(0,0,0,0.1);}
     </style>
 </head>
 <body>
@@ -251,11 +244,12 @@
                 <span class="score-value" id="scoreDisplay">0</span>
             </div>
             <div class="best-score">Best: <span id="highScoreDisplay">0</span></div>
+            <div class="daily-word-hud" id="dailyWordHUD">Daily: WORD (+500)</div>
         </div>
         
         <div class="center-hud">
             <div class="score-box" style="align-items: center;">
-                <span class="score-label">Blocks Dropped</span>
+                <span class="score-label">Blocks</span>
                 <span class="score-value" id="blocksDroppedDisplay" style="color: var(--teal);">0</span>
             </div>
         </div>
@@ -263,14 +257,12 @@
         <button class="btn-menu" id="btnOpenMenu">Menu</button>
     </div>
     
-    <div class="word-bank" id="wordBankDisplay"></div>
     <div class="combo-counter" id="comboDisplay">Perfect!</div>
-    
     <button class="btn-spell" id="spellBtn">SPELL</button>
 
     <div class="modal-overlay" id="wordModal">
         <div class="modal-content">
-            <div class="forced-warning">🚨 TOWER UNSTABLE - SPELL NOW! 🚨</div>
+            <div class="surge-warning">⚡ POWER SURGE! 3x POINTS! ⚡<br><span style="font-size: 12px; font-weight:700; opacity: 0.8;">Spell as many words as you can!</span></div>
             <div class="timer-info">
                 <span class="min-letters-req" id="minLetterDisplay">Min: 3 Letters</span>
                 <span>Time: <span id="timerText">30s</span></span>
@@ -292,10 +284,9 @@
         <div class="instructions-box">
             <ul>
                 <li>Tap or press <span>SPACE</span> to drop blocks and build your tower.</li>
-                <li>Tap <span>SPELL</span> (or double-tap <span>SHIFT</span>) to turn your tower into a word.</li>
-                <li><span class="warn">Danger:</span> The game speeds up the longer you play.</li>
-                <li><span class="warn">Danger:</span> Higher scores require longer words to spell!</li>
-                <li><span class="warn">Danger:</span> Dropping 15 blocks without spelling triggers a timed emergency!</li>
+                <li>Tap <span>SPELL</span> (or double-tap <span>SHIFT</span>) to turn your tower into words.</li>
+                <li>Drop 15 blocks without spelling to trigger a <span>⚡ Power Surge ⚡</span> for massive points!</li>
+                <li>Watch out for glowing <span>Lucky Blocks</span> (2x score) and build <span>Perfect Combos</span> for big rewards.</li>
             </ul>
         </div>
         <button class="btn-large" id="btnStartGame" style="width: 250px;">Play Game</button>
@@ -313,6 +304,7 @@
     <div id="game-over-screen" class="fullscreen-menu">
         <div class="menu-title">Game Over</div>
         <div class="menu-subtitle" id="goReason">Missed the stack!</div>
+        <div class="hook-text" id="goHook"></div>
         <div class="instructions-box" style="text-align: center; margin-bottom: 30px;">
             Final Score: <span id="goScore" style="color:var(--charcoal); font-size:24px;">0</span><br><br>
             Blocks Dropped: <span id="goBlocks" style="color:var(--charcoal)">0</span><br>
@@ -337,6 +329,13 @@ const BLOCKS_BEFORE_FORCE = 15;
 const LETTER_FREQS = {E:120,A:90,R:80,T:70,O:70,I:70,S:60,N:60,L:40,C:30,U:30,D:30,P:20,M:20,H:20,G:20,B:20,F:20,Y:20,W:20,K:10,V:10,X:5,J:5,Q:3,Z:3};
 const LETTER_VALS = {E:1,A:1,I:1,O:1,N:1,R:1,T:1,L:1,S:1,U:1, D:2,G:2, B:3,C:3,M:3,P:3, F:4,H:4,V:4,W:4,Y:4, K:5, J:8,X:8, Q:10,Z:10};
 
+// Daily Word Setup
+const DAILY_WORDS_LIST = ['TOWER', 'GHOST', 'PLANT', 'HEART', 'BRAIN', 'SMART', 'SPACE', 'MAGIC', 'DREAM', 'STARS', 'CLOUD', 'LIGHT', 'SOUND', 'OCEAN'];
+const today = new Date();
+const dayIndex = (today.getFullYear() + today.getMonth() + today.getDate()) % DAILY_WORDS_LIST.length;
+const dailyWord = DAILY_WORDS_LIST[dayIndex];
+document.getElementById('dailyWordHUD').innerText = `Daily: ${dailyWord} (+500)`;
+
 let letterPool = [];
 for (let [l, f] of Object.entries(LETTER_FREQS)) {
     for(let i=0; i<f; i++) letterPool.push(l);
@@ -344,12 +343,8 @@ for (let [l, f] of Object.entries(LETTER_FREQS)) {
 function getLetter() { return letterPool[Math.floor(Math.random() * letterPool.length)]; }
 
 // --- COLOR MATH ---
-function hexToRgb(hex) {
-    return { r: parseInt(hex.substring(1,3), 16), g: parseInt(hex.substring(3,5), 16), b: parseInt(hex.substring(5,7), 16) };
-}
-function rgbToHex(r, g, b) {
-    return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1).toUpperCase();
-}
+function hexToRgb(hex) { return { r: parseInt(hex.substring(1,3), 16), g: parseInt(hex.substring(3,5), 16), b: parseInt(hex.substring(5,7), 16) }; }
+function rgbToHex(r, g, b) { return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1).toUpperCase(); }
 function interpolateColor(c1, c2, factor) {
     let rgb1 = hexToRgb(c1); let rgb2 = hexToRgb(c2);
     let r = Math.round(rgb1.r + factor * (rgb2.r - rgb1.r));
@@ -383,7 +378,6 @@ let width, height;
 let blocks = [];
 let debris = [];
 let particles = [];
-let spelledWords = [];
 let gameState = 'start'; 
 let score = 0;
 let highScore = localStorage.getItem('cw_highscore') || 0;
@@ -402,7 +396,7 @@ let totalBlocksSpawned = 0;
 let blocksDroppedThisRun = 0; 
 let baseSwingSpeed = 1.0; 
 let blocksSinceLastSpell = 0;
-let isForcedSpell = false;
+let isPowerSurge = false;
 let currentTimerLimit = 30.0;
 let modalTimer = 0;
 let isCheckingWord = false; 
@@ -411,13 +405,13 @@ let isCheckingWord = false;
 let currentModalBlocks = []; 
 let selectedIndices = [];
 let currentLetters = []; 
+let blocksToRemoveThisSurge = []; // Stores IDs of blocks to compress later
 
 // --- DOM ELEMENTS ---
 const elScore = document.getElementById('scoreDisplay');
 const elHighScore = document.getElementById('highScoreDisplay');
 const elBlocksDropped = document.getElementById('blocksDroppedDisplay');
 const btnSpell = document.getElementById('spellBtn');
-const wordBankDisplay = document.getElementById('wordBankDisplay');
 const wordModal = document.getElementById('wordModal');
 const letterBank = document.getElementById('letterBank');
 const currentWordDisplay = document.getElementById('currentWord');
@@ -436,6 +430,7 @@ const pauseScreen = document.getElementById('pause-screen');
 const gameOverScreen = document.getElementById('game-over-screen');
 const goReason = document.getElementById('goReason');
 const goBlocks = document.getElementById('goBlocks');
+const goHook = document.getElementById('goHook');
 
 // --- INIT & EVENTS ---
 function init() {
@@ -451,15 +446,11 @@ function init() {
     canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleTap(); }, {passive: false});
     
     window.addEventListener('keydown', (e) => {
-        // Double-tap Shift detection
         if (e.key === 'Shift') {
             let now = performance.now();
             if (now - lastShiftTime < 400 && gameState === 'playing' && blocks.length > 1) {
-                openSpellModal(false);
-                lastShiftTime = 0; // Reset
-            } else {
-                lastShiftTime = now;
-            }
+                openSpellModal(false); lastShiftTime = 0; 
+            } else lastShiftTime = now;
         }
 
         if (gameState === 'playing') {
@@ -475,7 +466,7 @@ function init() {
                 let availableIndex = currentLetters.findIndex((l, idx) => l === typedLetter && !selectedIndices.includes(idx));
                 if (availableIndex !== -1) {
                     selectedIndices.push(availableIndex);
-                    if(!isForcedSpell) wordStatus.innerText = '';
+                    if(!isPowerSurge) wordStatus.innerText = '';
                     renderWordBuilder();
                 }
             }
@@ -484,7 +475,10 @@ function init() {
     
     // Buttons
     btnSpell.addEventListener('click', () => openSpellModal(false));
-    btnCancel.addEventListener('click', closeSpellModal);
+    btnCancel.addEventListener('click', () => {
+        if (isPowerSurge) endPowerSurge();
+        else closeSpellModal();
+    });
     btnDelete.addEventListener('click', deleteLetter);
     btnSubmit.addEventListener('click', submitWord);
     
@@ -523,20 +517,19 @@ function closePauseMenu() {
 }
 
 function resetGame() {
-    blocks = []; debris = []; particles = []; spelledWords = [];
+    blocks = []; debris = []; particles = []; 
     score = 0; combo = 0; cameraY = 0; targetCameraY = 0;
     isNextBlockProtected = false; baseSwingSpeed = 1.0; blocksSinceLastSpell = 0;
     totalBlocksSpawned = 0; blocksDroppedThisRun = 0;
     
     updateScore();
     elBlocksDropped.innerText = '0';
-    wordBankDisplay.innerText = '';
     gameOverScreen.classList.remove('active');
     
     blocks.push({
         x: width/2 - INITIAL_WIDTH/2, y: height - BLOCK_HEIGHT - 100,
         w: INITIAL_WIDTH, h: BLOCK_HEIGHT,
-        color: getGradientColor(totalBlocksSpawned), letter: '', squish: 1
+        color: getGradientColor(totalBlocksSpawned), letter: '', squish: 1, isLucky: false
     });
     
     spawnBlock();
@@ -549,10 +542,14 @@ function spawnBlock() {
     const lastBlock = blocks[blocks.length - 1];
     totalBlocksSpawned++;
     
+    // 1 in 20 chance for a Lucky Block
+    let lucky = Math.random() < 0.05;
+    
     activeBlock = {
         w: lastBlock.w, h: BLOCK_HEIGHT,
         color: getGradientColor(totalBlocksSpawned), letter: getLetter(),
-        y: lastBlock.y - BLOCK_HEIGHT, baseY: lastBlock.y - BLOCK_HEIGHT, squish: 1
+        y: lastBlock.y - BLOCK_HEIGHT, baseY: lastBlock.y - BLOCK_HEIGHT, squish: 1,
+        isLucky: lucky
     };
     swingTime = 0;
     
@@ -593,7 +590,6 @@ function handleTap() {
     
     activeBlock.squish = 0.7; blocks.push({...activeBlock});
     
-    // Increment stats and threats
     blocksDroppedThisRun++;
     elBlocksDropped.innerText = blocksDroppedThisRun;
     
@@ -601,6 +597,7 @@ function handleTap() {
     baseSwingSpeed += 0.03; 
     
     if (blocksSinceLastSpell >= BLOCKS_BEFORE_FORCE) {
+        // Trigger Power Surge Opportunity
         setTimeout(() => { if(gameState === 'playing') openSpellModal(true); }, 300);
     }
 
@@ -659,11 +656,8 @@ function update(dt) {
         else modalTimerBar.classList.remove('danger');
         
         if (modalTimer <= 0) {
-            if (isForcedSpell) {
-                wordModal.classList.remove('active'); gameOver("Time ran out! Tower Collapsed.");
-            } else {
-                closeSpellModal();
-            }
+            if (isPowerSurge) endPowerSurge(); // No penalty! Just ends frenzy mode.
+            else closeSpellModal(); // Timer ran out on normal spell, back to stacking.
         }
     }
 
@@ -699,15 +693,22 @@ function draw() {
         ctx.translate(0, b.h); ctx.scale(1, sq); ctx.translate(0, -b.h);
 
         let grad = ctx.createLinearGradient(0, 0, 0, b.h);
-        grad.addColorStop(0, adjustColor(b.color, 20)); grad.addColorStop(1, adjustColor(b.color, -20)); 
         
-        if (b === activeBlock && isNextBlockProtected) { ctx.shadowColor = 'rgba(255, 255, 255, 0.8)'; ctx.shadowBlur = 15; }
+        // Draw Lucky Block Visuals vs Normal Visuals
+        if (b.isLucky) {
+            grad.addColorStop(0, '#FFF59D'); grad.addColorStop(1, '#FBC02D');
+            ctx.shadowColor = 'rgba(251, 192, 45, 0.8)'; ctx.shadowBlur = 10;
+        } else {
+            grad.addColorStop(0, adjustColor(b.color, 20)); grad.addColorStop(1, adjustColor(b.color, -20)); 
+            if (b === activeBlock && isNextBlockProtected) { ctx.shadowColor = 'rgba(255, 255, 255, 0.8)'; ctx.shadowBlur = 15; }
+        }
         
         ctx.fillStyle = grad;
         ctx.beginPath(); ctx.roundRect(0, 0, b.w, b.h, 6); ctx.fill();
 
         if (b.letter) {
-            ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.font = '800 20px Nunito, sans-serif';
+            ctx.fillStyle = b.isLucky ? '#3D3D3D' : 'rgba(255,255,255,0.9)'; 
+            ctx.font = '800 20px Nunito, sans-serif';
             ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
             ctx.fillText(b.letter, b.w/2, b.h/2);
         }
@@ -727,26 +728,34 @@ function adjustColor(color, amount) {
 
 // --- WORD MECHANICS (MODAL) ---
 
-function openSpellModal(forced = false) {
+function openSpellModal(surge = false) {
     if (gameState !== 'playing' || blocks.length <= 1) return;
     gameState = 'modal';
-    isForcedSpell = forced;
-    currentTimerLimit = calculateTimerLimit();
-    modalTimer = currentTimerLimit;
+    isPowerSurge = surge;
+    blocksToRemoveThisSurge = []; // Reset the queue
     isCheckingWord = false;
     
     let currentMinLength = getMinWordLength();
     minLetterDisplay.innerText = `Min: ${currentMinLength} Letters`;
     
-    if (isForcedSpell) {
-        btnCancel.style.display = 'none'; wordModal.classList.add('forced-mode');
+    if (isPowerSurge) {
+        currentTimerLimit = 15.0; // Frenzy time!
+        btnCancel.innerText = 'Done'; // Replaces "Cancel"
+        wordModal.classList.add('surge-mode');
         wordStatus.className = 'status-msg'; wordStatus.innerText = '';
     } else {
-        btnCancel.style.display = 'block'; wordModal.classList.remove('forced-mode');
+        currentTimerLimit = calculateTimerLimit();
+        btnCancel.innerText = 'Cancel';
+        btnCancel.style.display = 'block'; 
+        wordModal.classList.remove('surge-mode');
         wordStatus.className = 'status-msg'; wordStatus.innerText = '';
     }
+    modalTimer = currentTimerLimit;
     
-    currentModalBlocks = blocks.filter(b => b.letter).map(b => ({ letter: b.letter, color: b.color }));
+    // Extract blocks and keep their original index reference for safe removal later
+    currentModalBlocks = blocks.filter(b => b.letter).map(b => ({ 
+        letter: b.letter, color: b.color, isLucky: b.isLucky, originalIndex: blocks.indexOf(b) 
+    }));
     currentLetters = currentModalBlocks.map(b => b.letter); 
     selectedIndices = [];
     
@@ -769,8 +778,8 @@ function renderWordBuilder() {
     letterBank.innerHTML = '';
     currentModalBlocks.forEach((block, i) => {
         let div = document.createElement('div');
-        div.className = `letter-tile ${selectedIndices.includes(i) ? 'used' : ''}`;
-        div.style.backgroundColor = block.color; 
+        div.className = `letter-tile ${selectedIndices.includes(i) ? 'used' : ''} ${block.isLucky ? 'lucky' : ''}`;
+        if (!block.isLucky) div.style.backgroundColor = block.color; 
         div.innerText = block.letter;
         
         let scoreTag = document.createElement('div');
@@ -780,7 +789,7 @@ function renderWordBuilder() {
         div.onclick = () => {
             if (!selectedIndices.includes(i)) {
                 selectedIndices.push(i);
-                if(!isForcedSpell) wordStatus.innerText = '';
+                if(!isPowerSurge) wordStatus.innerText = '';
                 renderWordBuilder();
             }
         };
@@ -791,7 +800,7 @@ function renderWordBuilder() {
 function deleteLetter() {
     if (selectedIndices.length > 0) {
         selectedIndices.pop();
-        if(!isForcedSpell) wordStatus.innerText = '';
+        if(!isPowerSurge) wordStatus.innerText = '';
         renderWordBuilder();
     }
 }
@@ -822,35 +831,95 @@ async function submitWord() {
 }
 
 function handleValidWord(word) {
-    wordStatus.className = 'status-msg status-success'; wordStatus.innerText = 'Valid Word!';
-    
-    blocksSinceLastSpell = 0; baseSwingSpeed = Math.max(1.0, baseSwingSpeed - (word.length * 0.08)); 
-    spelledWords.push(word); wordBankDisplay.innerText = spelledWords.join(' • ');
-    
+    // 1. Point Math & Multipliers
     let baseScore = word.split('').reduce((sum, char) => sum + LETTER_VALS[char], 0);
+    
     let lengthMult = 1;
     if(word.length == 4) lengthMult = 1.5; if(word.length == 5) lengthMult = 2;
     if(word.length == 6) lengthMult = 3; if(word.length >= 7) lengthMult = 5;
     let heightBonus = 1 + ((blocks.length - 1) * 0.01); 
     
-    score += Math.round(baseScore * lengthMult * heightBonus * 10); updateScore();
+    let points = baseScore * lengthMult * heightBonus * 10;
+    let statusFeedback = "Valid Word!";
+    
+    // Variable Rewards!
+    if (selectedIndices.some(i => currentModalBlocks[i].isLucky)) {
+        points *= 2; statusFeedback += " 2x LUCKY!";
+    }
+    if (word === dailyWord) {
+        points += 500; statusFeedback += " DAILY BONUS!";
+    }
+    if (combo >= 3) {
+        points += (combo * 100); statusFeedback += ` COMBO +${combo*100}!`;
+    }
+    if (isPowerSurge) {
+        points *= 3;
+    }
+    
+    score += Math.round(points); updateScore();
     if (word.length > bestWord.length) { bestWord = word; localStorage.setItem('cw_bestword', bestWord); }
     createConfetti();
 
-    setTimeout(() => {
-        let blockIndicesToRemove = selectedIndices.map(i => i + 1).sort((a,b)=>b-a);
-        blockIndicesToRemove.forEach(index => blocks.splice(index, 1));
+    // 2. Handle Tower/Modal Logic
+    if (isPowerSurge) {
+        // Queue these blocks to be removed later
+        blocksToRemoveThisSurge.push(...selectedIndices.map(i => currentModalBlocks[i].originalIndex));
         
-        let curY = blocks[0].y;
-        for(let i=1; i<blocks.length; i++) { curY -= BLOCK_HEIGHT; blocks[i].y = curY; }
+        // Remove from the current working array so they can't be reused
+        currentModalBlocks = currentModalBlocks.filter((_, i) => !selectedIndices.includes(i));
+        currentLetters = currentModalBlocks.map(b => b.letter); 
+        selectedIndices = [];
         
-        let topBlock = blocks[blocks.length-1];
-        activeBlock.y = topBlock.y - BLOCK_HEIGHT; activeBlock.baseY = activeBlock.y;
-        activeBlock.w = INITIAL_WIDTH; isNextBlockProtected = true; 
+        wordStatus.className = 'status-msg status-surge'; 
+        wordStatus.innerText = statusFeedback + ' Keep Going!';
+        renderWordBuilder();
         
-        targetCameraY = Math.max(0, cameraY - (selectedIndices.length * BLOCK_HEIGHT));
-        closeSpellModal();
-    }, 1000);
+        // Auto-end if out of letters
+        if (currentModalBlocks.length < 3) endPowerSurge();
+        
+    } else {
+        // Normal Mode - Compress Immediately
+        wordStatus.className = 'status-msg status-success'; wordStatus.innerText = statusFeedback;
+        blocksSinceLastSpell = 0; 
+        baseSwingSpeed = Math.max(1.0, baseSwingSpeed - (word.length * 0.08)); 
+        
+        setTimeout(() => {
+            let blockIndicesToRemove = selectedIndices.map(i => currentModalBlocks[i].originalIndex).sort((a,b)=>b-a);
+            blockIndicesToRemove.forEach(index => blocks.splice(index, 1));
+            
+            let curY = blocks[0].y;
+            for(let i=1; i<blocks.length; i++) { curY -= BLOCK_HEIGHT; blocks[i].y = curY; }
+            
+            let topBlock = blocks[blocks.length-1];
+            activeBlock.y = topBlock.y - BLOCK_HEIGHT; activeBlock.baseY = activeBlock.y;
+            activeBlock.w = INITIAL_WIDTH; isNextBlockProtected = true; 
+            
+            targetCameraY = Math.max(0, cameraY - (selectedIndices.length * BLOCK_HEIGHT));
+            closeSpellModal();
+        }, 1000);
+    }
+}
+
+// Called when timer hits 0 or user clicks "Done" during Power Surge
+function endPowerSurge() {
+    blocksSinceLastSpell = 0; 
+    baseSwingSpeed = Math.max(1.0, baseSwingSpeed - 0.2); // Mild speed reset
+    
+    // Surgically remove all blocks used during the frenzy
+    let toRemove = [...new Set(blocksToRemoveThisSurge)].sort((a,b)=>b-a);
+    toRemove.forEach(idx => blocks.splice(idx, 1));
+    
+    let curY = blocks[0].y;
+    for(let i=1; i<blocks.length; i++) { curY -= BLOCK_HEIGHT; blocks[i].y = curY; }
+    
+    let topBlock = blocks[blocks.length-1];
+    activeBlock.y = topBlock.y - BLOCK_HEIGHT; activeBlock.baseY = activeBlock.y;
+    activeBlock.w = INITIAL_WIDTH; isNextBlockProtected = true; 
+    
+    targetCameraY = Math.max(0, cameraY - (toRemove.length * BLOCK_HEIGHT));
+    
+    isPowerSurge = false;
+    closeSpellModal();
 }
 
 function updateScore() {
@@ -862,6 +931,14 @@ function updateScore() {
 
 function gameOver(reason) {
     gameState = 'gameover'; btnSpell.style.display = 'none';
+    
+    // The "Hook" logic
+    let diff = highScore - score;
+    let hookMsg = "";
+    if (score > highScore && highScore > 0) hookMsg = "🏆 NEW HIGH SCORE! 🏆";
+    else if (diff > 0 && diff <= 1000) hookMsg = `Only ${diff} pts from your high score. Go again?`;
+    goHook.innerText = hookMsg;
+    
     document.getElementById('goScore').innerText = score;
     goBlocks.innerText = blocksDroppedThisRun;
     document.getElementById('goBestWord').innerText = bestWord;
