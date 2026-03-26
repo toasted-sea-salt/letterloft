@@ -262,7 +262,7 @@
 
     <div class="modal-overlay" id="wordModal">
         <div class="modal-content">
-            <div class="surge-warning">⚡ POWER SURGE! 3x POINTS! ⚡<br><span style="font-size: 12px; font-weight:700; opacity: 0.8;">Spell as many words as you can!</span></div>
+            <div class="surge-warning">⚡ POWER SURGE! 3x POINTS! ⚡<br><span style="font-size: 12px; font-weight:700; opacity: 0.8;">Spell fast or click DONE to escape!</span></div>
             <div class="timer-info">
                 <span class="min-letters-req" id="minLetterDisplay">Min: 3 Letters</span>
                 <span>Time: <span id="timerText">30s</span></span>
@@ -286,7 +286,7 @@
                 <li>Tap or press <span>SPACE</span> to drop blocks and build your tower.</li>
                 <li>Tap <span>SPELL</span> (or double-tap <span>SHIFT</span>) to turn your tower into words.</li>
                 <li>Drop 15 blocks without spelling to trigger a <span>⚡ Power Surge ⚡</span> for massive points!</li>
-                <li>Watch out for glowing <span>Lucky Blocks</span> (2x score) and build <span>Perfect Combos</span> for big rewards.</li>
+                <li><span class="warn">Danger:</span> The clock is always ticking while spelling. If it hits 0s, you lose!</li>
             </ul>
         </div>
         <button class="btn-large" id="btnStartGame" style="width: 250px;">Play Game</button>
@@ -405,7 +405,7 @@ let isCheckingWord = false;
 let currentModalBlocks = []; 
 let selectedIndices = [];
 let currentLetters = []; 
-let blocksToRemoveThisSurge = []; // Stores IDs of blocks to compress later
+let blocksToRemoveThisSurge = []; 
 
 // --- DOM ELEMENTS ---
 const elScore = document.getElementById('scoreDisplay');
@@ -655,9 +655,10 @@ function update(dt) {
         if (pct < 30) modalTimerBar.classList.add('danger');
         else modalTimerBar.classList.remove('danger');
         
+        // --- STRICT TIMER PENALTY TRIGGER ---
         if (modalTimer <= 0) {
-            if (isPowerSurge) endPowerSurge(); // No penalty! Just ends frenzy mode.
-            else closeSpellModal(); // Timer ran out on normal spell, back to stacking.
+            wordModal.classList.remove('active');
+            gameOver("Time ran out! Tower Collapsed.");
         }
     }
 
@@ -694,7 +695,6 @@ function draw() {
 
         let grad = ctx.createLinearGradient(0, 0, 0, b.h);
         
-        // Draw Lucky Block Visuals vs Normal Visuals
         if (b.isLucky) {
             grad.addColorStop(0, '#FFF59D'); grad.addColorStop(1, '#FBC02D');
             ctx.shadowColor = 'rgba(251, 192, 45, 0.8)'; ctx.shadowBlur = 10;
@@ -732,7 +732,7 @@ function openSpellModal(surge = false) {
     if (gameState !== 'playing' || blocks.length <= 1) return;
     gameState = 'modal';
     isPowerSurge = surge;
-    blocksToRemoveThisSurge = []; // Reset the queue
+    blocksToRemoveThisSurge = []; 
     isCheckingWord = false;
     
     let currentMinLength = getMinWordLength();
@@ -752,7 +752,6 @@ function openSpellModal(surge = false) {
     }
     modalTimer = currentTimerLimit;
     
-    // Extract blocks and keep their original index reference for safe removal later
     currentModalBlocks = blocks.filter(b => b.letter).map(b => ({ 
         letter: b.letter, color: b.color, isLucky: b.isLucky, originalIndex: blocks.indexOf(b) 
     }));
@@ -831,7 +830,6 @@ async function submitWord() {
 }
 
 function handleValidWord(word) {
-    // 1. Point Math & Multipliers
     let baseScore = word.split('').reduce((sum, char) => sum + LETTER_VALS[char], 0);
     
     let lengthMult = 1;
@@ -842,7 +840,6 @@ function handleValidWord(word) {
     let points = baseScore * lengthMult * heightBonus * 10;
     let statusFeedback = "Valid Word!";
     
-    // Variable Rewards!
     if (selectedIndices.some(i => currentModalBlocks[i].isLucky)) {
         points *= 2; statusFeedback += " 2x LUCKY!";
     }
@@ -860,12 +857,9 @@ function handleValidWord(word) {
     if (word.length > bestWord.length) { bestWord = word; localStorage.setItem('cw_bestword', bestWord); }
     createConfetti();
 
-    // 2. Handle Tower/Modal Logic
     if (isPowerSurge) {
-        // Queue these blocks to be removed later
         blocksToRemoveThisSurge.push(...selectedIndices.map(i => currentModalBlocks[i].originalIndex));
         
-        // Remove from the current working array so they can't be reused
         currentModalBlocks = currentModalBlocks.filter((_, i) => !selectedIndices.includes(i));
         currentLetters = currentModalBlocks.map(b => b.letter); 
         selectedIndices = [];
@@ -874,11 +868,9 @@ function handleValidWord(word) {
         wordStatus.innerText = statusFeedback + ' Keep Going!';
         renderWordBuilder();
         
-        // Auto-end if out of letters
         if (currentModalBlocks.length < 3) endPowerSurge();
         
     } else {
-        // Normal Mode - Compress Immediately
         wordStatus.className = 'status-msg status-success'; wordStatus.innerText = statusFeedback;
         blocksSinceLastSpell = 0; 
         baseSwingSpeed = Math.max(1.0, baseSwingSpeed - (word.length * 0.08)); 
@@ -900,12 +892,10 @@ function handleValidWord(word) {
     }
 }
 
-// Called when timer hits 0 or user clicks "Done" during Power Surge
 function endPowerSurge() {
     blocksSinceLastSpell = 0; 
-    baseSwingSpeed = Math.max(1.0, baseSwingSpeed - 0.2); // Mild speed reset
+    baseSwingSpeed = Math.max(1.0, baseSwingSpeed - 0.2); 
     
-    // Surgically remove all blocks used during the frenzy
     let toRemove = [...new Set(blocksToRemoveThisSurge)].sort((a,b)=>b-a);
     toRemove.forEach(idx => blocks.splice(idx, 1));
     
@@ -932,7 +922,6 @@ function updateScore() {
 function gameOver(reason) {
     gameState = 'gameover'; btnSpell.style.display = 'none';
     
-    // The "Hook" logic
     let diff = highScore - score;
     let hookMsg = "";
     if (score > highScore && highScore > 0) hookMsg = "🏆 NEW HIGH SCORE! 🏆";
